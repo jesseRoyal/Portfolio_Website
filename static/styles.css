@@ -1,41 +1,93 @@
 body {
-    font-family: "Segoe UI", sans-serif;
-    background-color: #f8f9fa;
-    color: #333;
-    line-height: 1.6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #e0e7e9; /* Soft gray-blue background */
+    color: #1c1c1c;
+    margin: 0;
+    padding: 0;
 }
 
-h1, h2 {
-    color: #eb8501;
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
-p {
-    margin-bottom: 0.5rem;
-}
-
+/* Navbar */
 .navbar {
-    box-shadow: 0 2px 2px rgba(0,0,0,0.1);
+    background-color: #003d33; /* Deep teal */
 }
 
-.container {
-    padding-top: 10px;
-    padding-bottom: 5px;
+.navbar-brand, .nav-link {
+    color: #ffffff !important;
+    font-weight: bold;
+}
+
+.nav-link:hover {
+    color: #ffd600 !important; /* Sporty yellow highlight */
+}
+
+.navbar-brand img {
+    margin-right: 8px;
+}
+
+/* Hero section */
+.hero {
+    background-image: linear-gradient(rgba(0, 61, 51, 0.7), rgba(0, 61, 51, 0.7)), url("{{ url_for('static', filename='image/sports-bg.jpg') }}");
+    background-size: cover;
+    background-position: center;
+    color: #ffffff;
+    text-align: center;
+    padding: 100px 20px;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.hero h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    text-shadow: 2px 2px #000;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    font-style: italic;
+    text-shadow: 1px 1px #000;
+}
+
+/* Section headings */
+.section-heading {
+    font-size: 2rem;
+    color: #003d33;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+/* Cards / Buttons / Links */
+.card {
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    transition: transform 0.2s;
+    background-color: #ffffff;
+}
+
+.card:hover {
+    transform: scale(1.02);
 }
 
 .btn {
+    font-weight: 600;
     border-radius: 10px;
 }
 
-a {
-    color: #c9fd0d;
+/* Footer */
+footer {
+    background-color: #003d33;
+    color: #ffffff;
+    padding: 1rem 0;
+    text-align: center;
+    margin-top: 2rem;
 }
 
-a:hover {
-    text-decoration: underline;
-}
-
-ul.list-group {
-    margin-top: 10px;
+/* File list and messages */
+.file-list {
+    background-color: #ffffff;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }

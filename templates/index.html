@@ -1,5 +1,20 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
-    <h1 class="text-center">Welcome to My Digital Portfolio</h1>
-    <p class="text-center">Explore my work and experience.</p>
+<div class="hero">
+    <h1>Welcome to Felicia Smith's Digital Portfolio</h1>
+    <p>Blending sports, education, and technology to inspire the next generation of learners.</p>
+</div>
+
+<h2 class="section-heading">Explore the Site</h2>
+<div class="row text-center">
+    <div class="col-md-4 mb-3">
+        <a href="{{ url_for('portfolio') }}" class="btn btn-outline-success w-100">View Portfolio</a>
+    </div>
+    <div class="col-md-4 mb-3">
+        <a href="{{ url_for('philosophy') }}" class="btn btn-outline-primary w-100">My Philosophy</a>
+    </div>
+    <div class="col-md-4 mb-3">
+        <a href="{{ url_for('reflect') }}" class="btn btn-outline-warning w-100">Reflection</a>
+    </div>
+</div>
 {% endblock %}
