@@ -1,0 +1,41 @@
+body {
+    font-family: "Segoe UI", sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+h1, h2 {
+    color: #eb8501;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+p {
+    margin-bottom: 0.5rem;
+}
+
+.navbar {
+    box-shadow: 0 2px 2px rgba(0,0,0,0.1);
+}
+
+.container {
+    padding-top: 10px;
+    padding-bottom: 5px;
+}
+
+.btn {
+    border-radius: 10px;
+}
+
+a {
+    color: #c9fd0d;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+ul.list-group {
+    margin-top: 10px;
+}
