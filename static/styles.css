@@ -26,7 +26,7 @@ body {
 
 /* Hero section */
 .hero {
-    background-image: linear-gradient(rgba(0, 61, 51, 0.7), rgba(0, 61, 51, 0.7)), url("{{ url_for('static', filename='image/sports-bg.jpg') }}");
+    background-image: linear-gradient(rgba(0, 61, 51, 0.7), rgba(0, 61, 51, 0.7)), url("{{ url_for('static', filename='C:/Portfolio website/static/image/track.jpg') }}");
     background-size: cover;
     background-position: center;
     color: #ffffff;
@@ -85,7 +85,7 @@ footer {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 4rem
+    height: 2.5rem
 }
 
 /* File list and messages */

@@ -1,19 +1,37 @@
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, flash
 from flask_mail import Mail, Message
 import os
+import dotenv
+
+# Load environment variables
+dotenv.load_dotenv()
 
 app = Flask(__name__)
+
 app.secret_key = 'supersecret'
 
 # Flask-Mail configuration
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Use the appropriate mail server (this is for Gmail)
-app.config['MAIL_PORT'] = 465  # Port for SSL
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = 'jesse.nelson432@gmail.com'  # Replace with your email
-app.config['MAIL_PASSWORD'] = 'Jamesbond_456'  # Replace with your email password or app-specific password
-app.config['MAIL_DEFAULT_SENDER'] = 'jesse.nelson432@gmail.com'  # Your email address
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = os.getenv('EMAIL_ADD')  # educationsports7@gmail.com
+app.config['MAIL_PASSWORD'] = os.getenv('PASSWORD')    # App password (16-char)
+#app.config['MAIL_USERNAME'] = 'educationsports7@gmail.com'
+#app.config['MAIL_PASSWORD'] = 'jturzqljlaraggdc'
+# Initialize Flask-Mail AFTER config
 mail = Mail(app)
+
+# Debugging environment variable loading
+print("EMAIL:", os.getenv('EMAIL_ADD'))
+print("PASSWORD:", os.getenv('PASSWORD'))
+
+# ===== Debugging SMTP =====
+print("[DEBUG] SMTP Config:")
+print(f"Server: {app.config['MAIL_SERVER']}:{app.config['MAIL_PORT']}")
+print(f"TLS/SSL: TLS={app.config['MAIL_USE_TLS']}, SSL={app.config['MAIL_USE_SSL']}")
+print(f"Email: {app.config['MAIL_USERNAME']}")
+print(f"Password loaded: {bool(app.config['MAIL_PASSWORD'])}")  # True if password exists
 
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -65,30 +83,35 @@ def philosophy():
 def reflect():
     return render_template('reflection.html')
 
+# ===== Contact Route =====
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     if request.method == 'POST':
-        name = request.form.get('name')
-        email = request.form.get('email')
-        message = request.form.get('message')
+        try:
+            name = request.form['name']
+            email = request.form['email']
+            message = request.form['message']
 
-        if name and email and message:
-            # Send email using Flask-Mail
-            msg = Message(f"New Message from {name}",
-                          recipients=["jesse.nelson432@gmail.com"],  # Replace with your email
-                          body=f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}")
-            try:
-                mail.send(msg)
-                flash('Your message has been sent successfully!', 'success')
-            except Exception as e:
-                flash('There was an issue sending your message. Please try again.', 'danger')
-        else:
-            flash('Please fill out all fields.', 'danger')
+            print(f"\n[DEBUG] Trying to send email from {email}...")
+
+            # In the contact route:
+            msg = Message(
+                subject=f"New Message from {name}",
+                sender=email,  # From the form (e.g., user@example.com)
+                recipients=[app.config['MAIL_USERNAME']],  # To your Gmail
+                body=f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}")
+
+            mail.send(msg)
+            print("[DEBUG] ✅ Email sent successfully!")
+            flash('Your message was sent!', 'success')
+
+        except Exception as e:
+            print(f"[DEBUG] ❌ SMTP Error: {str(e)}")
+            flash(f'Error: {str(e)}', 'danger')
 
         return redirect(url_for('contact'))
 
     return render_template('contact.html')
-
 
 @app.route('/google-classroom')
 def google_classroom():
