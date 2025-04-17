@@ -1,6 +1,28 @@
-<!-- templates/about.html -->
 {% extends "base.html" %}
+
 {% block content %}
-<h1>About Me</h1>
-<p>Hi! I'm Felicia Smith, currently studying at G.C. Foster College. This portfolio highlights my journey through the Educational Technology course. I am passionate about blending innovation with traditional values to support student learning and growth.</p>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mx-auto text-center">
+            <h1 class="display-4 mb-4">About Me</h1>
+            <img src="{{ url_for('static', filename='image/profile.jpg') }}" 
+                 alt="Profile Photo" class="img-fluid rounded-circle mb-4" width="200">
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <p class="lead">Hi! I'm Felicia Smith</p>
+                    <p>Currently studying at G.C. Foster College, specializing in Educational Technology.</p>
+                    <p>This portfolio showcases my journey in blending sports education with modern technology.</p>
+                    
+                    <div class="mt-4">
+                        <h5>Connect With Me</h5>
+                        <a href="{{ url_for('contact') }}" class="btn btn-primary">
+                            <i class="fas fa-envelope"></i> Contact
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

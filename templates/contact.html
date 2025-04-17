@@ -3,12 +3,26 @@
 {% block content %}
 <div class="container">
     <h1 class="mt-4 text-center">Contact Me</h1>
-    <p class="lead text-center">Feel free to reach out for any inquiries or collaborations.</p>
+    
+    <!-- Contact-specific flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="row justify-content-center mt-3">
+                <div class="col-md-8">
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endwith %}
 
-    <div class="row mt-5 d-flex align-items-stretch">
-        <!-- Contact Info (No white background) -->
+    <div class="row mt-5">
         <div class="col-md-6 mb-4">
-            <div class="h-100 p-4" style="background: transparent;">
+            <div class="h-100 p-4">
                 <h4>Contact Information</h4>
                 <p><strong>Email:</strong> educationsports7@gmail.com</p>
                 <p><strong>Phone:</strong> +1 (876) 456-7890</p>
@@ -16,12 +30,11 @@
             </div>
         </div>
 
-        <!-- Contact Form (still in card for neat form display) -->
         <div class="col-md-6 mb-4">
             <div class="card h-100 shadow">
                 <div class="card-body">
                     <h4 class="card-title">Send a Message</h4>
-                    <form action="{{ url_for('contact') }}" method="post">
+                    <form method="POST" action="{{ url_for('contact') }}">
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>
                             <input type="text" class="form-control" id="name" name="name" required>
@@ -34,24 +47,11 @@
                             <label for="message" class="form-label">Message</label>
                             <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Send</button>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div class="mt-4">
-        {% for category, message in messages %}
-        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-    {% endwith %}
 </div>
 {% endblock %}

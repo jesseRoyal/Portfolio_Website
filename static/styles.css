@@ -1,98 +1,217 @@
+/* ===== SPORTS THEME ===== */
+:root {
+    --sport-green: #1e8a3b;
+    --track-orange: #ff6b35;
+    --field-blue: #00a5e0;
+    --warm-yellow: #ffd600;
+    --court-purple: #6a3093;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #e0e7e9; /* Soft gray-blue background */
-    color: #1c1c1c;
-    margin: 0;
-    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Sporty Background Pattern */
+.sport-bg-pattern {
+    background-color: #f8f9fa;
+    background-image: 
+        linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)),
+        url('../image/sport-pattern.png');
+    background-size: 300px, cover;
 }
 
 /* Navbar */
 .navbar {
-    background-color: #003d33; /* Deep teal */
+    background: linear-gradient(to right, var(--sport-green), var(--court-purple));
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 .navbar-brand, .nav-link {
-    color: #16db9a !important;
-    font-weight: bold;
+    color: white !important;
+    font-weight: 600;
 }
 
 .nav-link:hover {
-    color: #ffd600 !important; /* Sporty yellow highlight */
+    color: var(--warm-yellow) !important;
+    transform: translateY(-2px);
 }
 
-.navbar-brand img {
-    margin-right: 8px;
-}
-
-/* Hero section */
+/* Hero Section */
 .hero {
-    background-image: linear-gradient(rgba(0, 61, 51, 0.7), rgba(0, 61, 51, 0.7)), url("{{ url_for('static', filename='C:/Portfolio website/static/image/track.jpg') }}");
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                url('../image/track-field.jpg');
     background-size: cover;
     background-position: center;
-    color: #ffffff;
+    color: white;
+    border-radius: 15px;
+    margin: 2rem 0;
+    padding: 5rem 2rem;
     text-align: center;
-    padding: 100px 20px;
-    border-radius: 10px;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
 }
 
 .hero h1 {
-    font-size: 3rem;
+    font-size: 3.5rem;
     font-weight: 800;
-    text-shadow: 2px 2px #000;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    animation: fadeInDown 1s;
 }
 
-.hero p {
-    font-size: 1.2rem;
-    font-style: italic;
-    text-shadow: 1px 1px #000;
-}
-
-/* Section headings */
-.section-heading {
-    font-size: 2rem;
-    color: #003d33;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-}
-
-/* Cards / Buttons / Links */
+/* Cards */
 .card {
-    border: none;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     border-radius: 12px;
-    transition: transform 0.2s;
-    background-color: #ffffff;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
 }
 
 .card:hover {
-    transform: scale(1.02);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
 }
 
-.btn {
+/* Buttons */
+.btn-sport {
+    background: linear-gradient(45deg, var(--track-orange), var(--field-blue));
+    color: white;
+    border: none;
     font-weight: 600;
-    border-radius: 10px;
+    letter-spacing: 0.5px;
+    padding: 0.5rem 1.5rem;
+    transition: all 0.3s;
 }
 
-/* Footer */
-footer {
-    background-color: #003d33;
-    color: #ffffff;
-    padding: 1rem 0;
-    text-align: center;
-    margin-top: 2rem;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 2.5rem
+.btn-sport:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    color: white;
 }
 
-/* File list and messages */
-.file-list {
-    background-color: #ffffff;
-    padding: 1rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-   
+/* Chatbot Styles */
+#chatbot-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 350px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    transform: translateY(20px);
+    opacity: 0;
+}
+
+#chatbot-container.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+#chatbot-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--track-orange);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    z-index: 1001;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#chatbot-toggle:hover {
+    transform: scale(1.1) rotate(10deg);
+    background: var(--field-blue);
+}
+
+.chatbot-card {
+    border: 2px solid var(--field-blue);
+    border-radius: 15px;
+    overflow: hidden;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-header {
+    background: linear-gradient(to right, var(--sport-green), var(--field-blue));
+    color: white;
+    padding: 12px;
+    font-weight: bold;
+}
+
+#chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+    background: rgba(255,255,255,0.9);
+    scrollbar-width: thin;
+    scrollbar-color: var(--field-blue) #f1f1f1;
+}
+
+.chat-footer {
+    padding: 10px;
+    background: white;
+    border-top: 1px solid #eee;
+}
+
+.user-message {
+    background-color: var(--field-blue);
+    color: white;
+    border-radius: 15px 15px 0 15px;
+    margin-left: 20%;
+    margin-bottom: 8px;
+}
+
+.bot-message {
+    background-color: #f1f1f1;
+    color: #333;
+    border-radius: 15px 15px 15px 0;
+    margin-right: 20%;
+    margin-bottom: 8px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    #chatbot-container {
+        width: 90% !important;
+        right: 5% !important;
+    }
+}
+
+/* Animations */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.message {
+    animation: fadeIn 0.3s ease;
+    padding: 10px 15px;
+    max-width: 80%;
+    word-wrap: break-word;
 }

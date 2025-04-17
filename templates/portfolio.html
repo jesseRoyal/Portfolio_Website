@@ -1,38 +1,54 @@
-<!-- templates/portfolio.html -->
 {% extends "base.html" %}
+
 {% block content %}
-<h1>My Portfolio</h1>
-<p>Below you will find my assignments and group projects. Feel free to explore them and visit my Google Classroom.</p>
+<div class="container">
+    <h1>My Portfolio</h1>
+    
+    <!-- Public Classroom Link -->
+    <a href="{{ url_for('google_classroom') }}" class="btn btn-success mb-3" target="_blank">
+        <i class="fas fa-external-link-alt"></i> Google Classroom
+    </a>
 
-<a href="https://classroom.google.com" class="btn btn-success mb-3" target="_blank">Go to Google Classroom</a>
-
-<form method="post" enctype="multipart/form-data">
-    <div class="input-group mb-3">
-        <input type="file" name="file" class="form-control" required>
-        <button class="btn btn-primary" type="submit">Upload File</button>
-    </div>
-</form>
-
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }} mt-3">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
-
-{% if files %}
-    <ul class="list-group mt-4">
-        {% for file in files %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <a href="{{ url_for('uploaded_file', filename=file) }}" target="_blank">{{ file }}</a>
-            <form method="post" action="{{ url_for('delete_file', filename=file) }}" style="margin: 0;">
-                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+    <!-- Admin Upload Section -->
+    {% if current_user.is_authenticated %}
+    <div class="card mb-3">
+        <div class="card-header bg-primary text-white">
+            <i class="fas fa-upload"></i> Upload Files
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                <div class="input-group mb-3">
+                    <input type="file" class="form-control" name="file" required>
+                    <button class="btn btn-primary" type="submit">Upload</button>
+                </div>
             </form>
-        </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p class="mt-3">No files uploaded yet.</p>
-{% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- File List -->
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <i class="fas fa-folder-open"></i> My Files
+        </div>
+        {% if files %}
+        <ul class="list-group list-group-flush">
+            {% for file in files %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{{ url_for('uploaded_file', filename=file) }}" target="_blank">{{ file }}</a>
+                {% if current_user.is_authenticated %}
+                <form method="post" action="{{ url_for('delete_file', filename=file) }}">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="card-body">
+            <p class="text-muted">No files uploaded yet</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}
