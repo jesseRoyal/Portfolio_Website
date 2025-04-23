@@ -3,46 +3,37 @@ from flask_mail import Mail, Message
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from flask_wtf.csrf import CSRFProtect
 import os
 import smtplib
 import dotenv
+import json
 
-# Initialize
+# Initialize environment variables
 dotenv.load_dotenv()
+
+# Create Flask app
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'dev-secret-key')
+
+# Initialize CSRF protection FIRST
+csrf = CSRFProtect(app)
 
 # Flask-Mail configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = os.getenv('EMAIL_ADD')  # educationsports7@gmail.com
-app.config['MAIL_PASSWORD'] = os.getenv('PASSWORD')    # App password (16-char)
-#app.config['MAIL_USERNAME'] = 'educationsports7@gmail.com'
-#app.config['MAIL_PASSWORD'] = 'jturzqljlaraggdc'
-# Initialize Flask-Mail AFTER config
+app.config['MAIL_USERNAME'] = os.getenv('EMAIL_ADD')
+app.config['MAIL_PASSWORD'] = os.getenv('PASSWORD')
 mail = Mail(app)
 
-# Debugging environment variable loading
-print("EMAIL:", os.getenv('EMAIL_ADD'))
-print("PASSWORD:", os.getenv('PASSWORD'))
-
-# ===== Debugging SMTP =====
-print("[DEBUG] SMTP Config:")
-print(f"Server: {app.config['MAIL_SERVER']}:{app.config['MAIL_PORT']}")
-print(f"TLS/SSL: TLS={app.config['MAIL_USE_TLS']}, SSL={app.config['MAIL_USE_SSL']}")
-print(f"Email: {app.config['MAIL_USERNAME']}")
-print(f"Password loaded: {bool(app.config['MAIL_PASSWORD'])}")  # True if password exists
-
-
-# File Uploads
+# File Uploads Configuration
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'pdf', 'docx', 'pptx', 'jpg', 'png'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Authentication
+# Authentication Setup
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -70,24 +61,30 @@ def about():
     return render_template('about.html')
 
 @app.route('/portfolio', methods=['GET', 'POST'])
+#@login_required
 def portfolio():
     if request.method == 'POST':
-        if not current_user.is_authenticated:
-            flash('Login required for uploads', 'warning')
-            return redirect(url_for('login'))
-        
         if 'file' not in request.files:
             flash('No file selected', 'danger')
             return redirect(url_for('portfolio'))
             
         file = request.files['file']
+        description = request.form.get('description', '')
+        
         if file.filename == '':
             flash('No selected file', 'danger')
             return redirect(url_for('portfolio'))
             
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            
+            # Save description
+            descriptions = load_descriptions()
+            descriptions[filename] = description
+            save_descriptions(descriptions)
+            
             flash(f'{filename} uploaded successfully!', 'success')
         else:
             flash('Allowed file types: PDF, DOCX, PPTX, JPG, PNG', 'danger')
@@ -95,8 +92,60 @@ def portfolio():
         return redirect(url_for('portfolio'))
 
     files = os.listdir(app.config['UPLOAD_FOLDER'])
-    return render_template('portfolio.html', files=files)
+    files = [f for f in files if f != 'descriptions.json']
+    descriptions = load_descriptions()
+    
+    return render_template('portfolio.html', files=files, descriptions=descriptions)
 
+@app.route('/delete/<filename>', methods=['POST'])
+@login_required
+def delete_file(filename):
+    try:
+        # Verify CSRF token
+        if not request.form.get('csrf_token'):
+            flash('Invalid request: CSRF token missing', 'danger')
+            return redirect(url_for('portfolio'))
+            
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        
+        if not os.path.exists(file_path):
+            flash('File not found', 'danger')
+            return redirect(url_for('portfolio'))
+
+        # Delete file
+        os.remove(file_path)
+        
+        # Update descriptions
+        descriptions = load_descriptions()
+        if filename in descriptions:
+            del descriptions[filename]
+            save_descriptions(descriptions)
+        
+        flash(f'{filename} deleted successfully', 'success')
+        
+    except Exception as e:
+        flash(f'Delete failed: {str(e)}', 'danger')
+        app.logger.error(f'Delete error: {e}')
+    
+    return redirect(url_for('portfolio'))
+
+# Helper functions
+def load_descriptions():
+    desc_file = os.path.join(app.config['UPLOAD_FOLDER'], 'descriptions.json')
+    if os.path.exists(desc_file):
+        with open(desc_file) as f:
+            return json.load(f)
+    return {}
+
+def save_descriptions(descriptions):
+    desc_file = os.path.join(app.config['UPLOAD_FOLDER'], 'descriptions.json')
+    with open(desc_file, 'w') as f:
+        json.dump(descriptions, f)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Other routes remain unchanged...
 @app.route('/philosophy')
 def philosophy():
     return render_template('philosophy.html')
@@ -105,7 +154,6 @@ def philosophy():
 def reflect():
     return render_template('reflection.html')
 
-# ===== Contact Route =====
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     if request.method == 'POST':
@@ -114,27 +162,19 @@ def contact():
             email = request.form['email']
             message = request.form['message']
 
-            print(f"\n[DEBUG] Trying to send email from {email}...")
-
-            # In the contact route:
             msg = Message(
                 subject=f"New Message from {name}",
-                sender=email,  # From the form (e.g., user@example.com)
-                recipients=[app.config['MAIL_USERNAME']],  # To your Gmail
+                sender=email,
+                recipients=[app.config['MAIL_USERNAME']],
                 body=f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}")
-
             mail.send(msg)
-            print("[DEBUG] ✅ Email sent successfully!")
             flash('Your message was sent!', 'success')
 
         except Exception as e:
-            print(f"[DEBUG] ❌ SMTP Error: {str(e)}")
             flash(f'Error: {str(e)}', 'danger')
 
         return redirect(url_for('contact'))
-
     return render_template('contact.html')
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -149,7 +189,6 @@ def login():
             return redirect(url_for('portfolio'))
         else:
             flash('Invalid credentials', 'danger')
-    
     return render_template('login.html')
 
 @app.route('/logout')
@@ -167,19 +206,12 @@ def google_classroom():
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-@app.route('/delete/<filename>', methods=['POST'])
-@login_required
-def delete_file(filename):
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    if os.path.exists(filepath):
-        os.remove(filepath)
-        flash(f'{filename} deleted successfully!', 'info')
-    else:
-        flash('File not found', 'danger')
-    return redirect(url_for('portfolio'))
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+@app.route('/test-delete', methods=['GET', 'POST'])
+def test_delete():
+    if request.method == 'POST':
+        print("Delete form submitted!")  # Check if this appears in terminal
+        return "Delete action received!"  # Simple response
 
 if __name__ == '__main__':
     app.run(debug=True)

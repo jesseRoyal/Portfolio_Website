@@ -103,6 +103,7 @@ body {
     transition: all 0.3s ease;
     transform: translateY(20px);
     opacity: 0;
+    pointer-events: none;
 }
 
 #chatbot-container.show {
@@ -112,7 +113,7 @@ body {
 
 #chatbot-toggle {
     position: fixed;
-    bottom: 20px;
+    bottom: 100px;
     right: 20px;
     width: 60px;
     height: 60px;
@@ -178,6 +179,23 @@ body {
     border-radius: 15px 15px 15px 0;
     margin-right: 20%;
     margin-bottom: 8px;
+}
+
+/* Delete Button Styles */
+.delete-btn {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.delete-btn:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+/* List Group Items */
+.list-group-item {
+    position: relative;
+    z-index: 1;
 }
 
 /* Responsive Adjustments */
