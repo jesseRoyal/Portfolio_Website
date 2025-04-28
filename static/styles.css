@@ -89,6 +89,13 @@ body {
     pointer-events: auto;
 }
 
+/* Chatbot Card Structure */
+.chatbot-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
 /* Chat header */
 .chat-header {
     background: linear-gradient(to right, var(--sport-green), var(--court-purple));
@@ -100,12 +107,12 @@ body {
     align-items: center;
 }
 
-/* Chat messages area */
-#chat-messages {
+/* Chat messages scroll container */
+.chat-messages-scroll-container {
     flex: 1;
-    padding: 15px;
     overflow-y: auto;
     overflow-x: hidden;
+    padding: 15px;
     background: #f8f8f8;
     scroll-behavior: smooth;
     display: flex;
@@ -171,6 +178,25 @@ body {
     text-decoration: underline;
 }
 
+/* Custom scrollbar */
+.chat-messages-scroll-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-messages-scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.chat-messages-scroll-container::-webkit-scrollbar-thumb {
+    background: var(--court-purple);
+    border-radius: 4px;
+}
+
+.chat-messages-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: var(--sport-green);
+}
+
 /* Typing indicator */
 .typing-indicator {
     background: transparent;
@@ -212,7 +238,7 @@ body {
 }
 
 /* Input area */
-.chat-input-container {
+.chat-footer {
     display: flex;
     padding: 10px;
     background: white;

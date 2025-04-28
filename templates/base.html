@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body class="sport-bg-pattern">
-    <!-- Navigation -->
+    <!-- Navigation -->  
     {% include 'nav.html' %}
 
     <!-- Main Content -->
@@ -31,31 +31,33 @@
     <!-- Footer -->
     {% include 'footer.html' %}
 
-    <!-- AI Chatbot -->
-    <div id="chatbot-container" class="shadow-lg" role="dialog" aria-labelledby="chatbot-header" aria-live="polite">
-        <div class="chatbot-card">
-            <div class="chat-header d-flex justify-content-between align-items-center" id="chatbot-header">
-                <span><i class="fas fa-robot me-2" aria-hidden="true"></i>Sports Coach Bot</span>
-                <button id="close-chatbot" class="btn btn-sm btn-light" aria-label="Close chatbot">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
+  <!-- AI Chatbot -->
+<div id="chatbot-container" class="shadow-lg" role="dialog" aria-labelledby="chatbot-header" aria-live="polite">
+    <div class="chatbot-card">
+        <div class="chat-header d-flex justify-content-between align-items-center" id="chatbot-header">
+            <span><i class="fas fa-robot me-2" aria-hidden="true"></i>Sports Coach Bot</span>
+            <button id="close-chatbot" class="btn btn-sm btn-light" aria-label="Close chatbot">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="chat-messages-scroll-container">
             <div id="chat-messages" role="log"></div>
-            <div class="chat-footer">
-                <div class="input-group">
-                    <input type="text" id="user-input" class="form-control" 
-                           placeholder="Ask about sports..." aria-label="Chat input">
-                    <button id="send-btn" class="btn btn-primary" aria-label="Send message">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
+        </div>
+        <div class="chat-footer">
+            <div class="input-group">
+                <input type="text" id="user-input" class="form-control" 
+                       placeholder="Ask about sports..." aria-label="Chat input">
+                <button id="send-btn" class="btn btn-primary" aria-label="Send message">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
             </div>
         </div>
     </div>
+</div>
 
-    <button id="chatbot-toggle" class="shadow" aria-label="Open sports coach chatbot" title="Chat with CoachBot">
-        <i class="fas fa-robot fa-lg" aria-hidden="true"></i>
-    </button>
+<button id="chatbot-toggle" class="shadow" aria-label="Open sports coach chatbot" title="Chat with CoachBot">
+    <i class="fas fa-robot fa-lg" aria-hidden="true"></i>
+</button>
 
     <!-- JavaScript Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

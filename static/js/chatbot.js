@@ -9,21 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
         sessionId: 'session-' + Math.random().toString(36).substring(2, 9)
     };
 
-    // Initialize scrollable container
-    function initChatScroll() {
-        const scrollContainer = document.createElement('div');
-        scrollContainer.id = 'messages-scroll-container';
-        scrollContainer.className = 'messages-scroll-container';
-        chatUI.messageDisplay.parentNode.insertBefore(scrollContainer, chatUI.messageDisplay);
-        scrollContainer.appendChild(chatUI.messageDisplay);
-    }
-
     if (!Object.values(chatUI).every(element => element !== null)) {
         console.error('Chat elements missing from DOM');
         return;
     }
-
-    initChatScroll();
 
     function toggleChatVisibility() {
         chatUI.chatContainer.classList.toggle('show');
@@ -38,11 +27,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function scrollToBottom(instant = false) {
-        const container = document.getElementById('messages-scroll-container');
-        container.scrollTo({
-            top: container.scrollHeight,
-            behavior: instant ? 'auto' : 'smooth'
-        });
+        const container = document.querySelector('.chat-messages-scroll-container');
+        if (!container) return;
+        
+        // Use small timeout to ensure DOM updates are complete
+        setTimeout(() => {
+            container.scrollTo({
+                top: container.scrollHeight,
+                behavior: instant ? 'auto' : 'smooth'
+            });
+        }, 50);
     }
 
     function addMessage(text, isUserMessage = false) {
