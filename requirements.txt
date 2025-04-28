@@ -16,3 +16,6 @@ email-validator
 # File Handling
 python-magic
 Flask-WTF
+
+#AI
+openAI

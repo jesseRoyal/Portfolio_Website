@@ -1,93 +1,124 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const toggleBtn = document.getElementById('chatbot-toggle');
-    const container = document.getElementById('chatbot-container');
-    const closeBtn = document.getElementById('close-chatbot');
-    const sendBtn = document.getElementById('send-btn');
-    const userInput = document.getElementById('user-input');
-    const chatMessages = document.getElementById('chat-messages');
-    
-    // Sports knowledge base - enhanced with more responses
-    const sportsKnowledge = {
-        "hi": "Hello athlete! 🏅 What sports question can I help with today?",
-        "hello": "Hey there champion! Ready to talk sports?",
-        "training": "Pro tip: Always warm up for 10-15 minutes before training! Try dynamic stretches like leg swings and arm circles.",
-        "nutrition": "For peak performance: 🍌 Carbs before, protein after, and hydrate constantly! Water is your best friend!",
-        "basketball": "Remember BEEF for shooting: Balance, Eyes on target, Elbow straight, Follow-through! 🏀",
-        "track": "Interval training improves speed! Try 400m repeats with 2min rest between. 🏃‍♂️",
-        "soccer": "Practice ball control with 'keepy-uppies' daily! Start with 10 as a goal. ⚽",
-        "recover": "Recovery is just as important as training! Try foam rolling and cold baths after intense sessions.",
-        "coach": "Great coaches communicate clearly, demonstrate skills, and motivate consistently!",
-        "default": "I'm your virtual sports coach! Ask about:\n- Training techniques\n- Sports nutrition\n- Injury prevention\n- Coaching strategies"
+document.addEventListener('DOMContentLoaded', () => {
+    const chatUI = {
+        toggleButton: document.getElementById('chatbot-toggle'),
+        chatContainer: document.getElementById('chatbot-container'),
+        closeButton: document.getElementById('close-chatbot'),
+        sendButton: document.getElementById('send-btn'),
+        userInputField: document.getElementById('user-input'),
+        messageDisplay: document.getElementById('chat-messages'),
+        sessionId: 'session-' + Math.random().toString(36).substring(2, 9)
     };
-    
-    // Toggle chatbot visibility with smooth animation
-    toggleBtn.addEventListener('click', () => {
-        container.classList.toggle('show');
-        if (container.classList.contains('show')) {
-            userInput.focus();
-        }
-    });
-    
-    closeBtn.addEventListener('click', () => {
-        container.classList.remove('show');
-    });
-    
-    // Add message to chat with typing indicator
-    function addMessage(text, isUser = false) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
-        messageDiv.innerHTML = `<strong>${isUser ? 'You' : 'Coach Bot'}:</strong> ${text}`;
-        chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    // Verify all elements exist
+    if (!Object.values(chatUI).every(element => element !== null)) {
+        console.error('One or more chat elements are missing from the DOM');
+        return;
     }
-    
-    // Process user input with enhanced matching
-    function processInput() {
-        const question = userInput.value.trim();
-        userInput.value = '';
-        
-        if (question) {
-            addMessage(question, true);
+
+    function toggleChatVisibility() {
+        chatUI.chatContainer.classList.toggle('show');
+        if (chatUI.chatContainer.classList.contains('show')) {
+            chatUI.userInputField.focus();
+        }
+    }
+
+    function closeChat() {
+        chatUI.chatContainer.classList.remove('show');
+    }
+
+    function addMessage(text, isUserMessage = false) {
+        const messageElement = document.createElement('div');
+        messageElement.className = `message ${isUserMessage ? 'user-message' : 'bot-message'}`;
+        const sanitizedText = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        messageElement.innerHTML = `<strong>${isUserMessage ? 'You' : 'Coach Bot'}:</strong> ${sanitizedText}`;
+        chatUI.messageDisplay.appendChild(messageElement);
+        chatUI.messageDisplay.scrollTop = chatUI.messageDisplay.scrollHeight;
+    }
+
+    async function sendMessage() {
+        const userMessage = chatUI.userInputField.value.trim();
+        if (!userMessage) return;
+
+        // Disable UI during processing
+        chatUI.userInputField.disabled = true;
+        chatUI.sendButton.disabled = true;
+        chatUI.userInputField.value = '';
+        addMessage(userMessage, true);
+
+        // Create typing indicator
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'message bot-message typing';
+        typingIndicator.innerHTML = '<em>Coach Bot is typing...</em>';
+        chatUI.messageDisplay.appendChild(typingIndicator);
+
+        try {
+            // 1. Verify the endpoint URL is correct
+            const apiUrl = '/api/chatbot'; // Make sure this matches your server route
             
-            // Show typing indicator
-            const typingIndicator = document.createElement('div');
-            typingIndicator.className = 'message bot-message';
-            typingIndicator.innerHTML = '<strong>Coach Bot:</strong> <em>Typing...</em>';
-            chatMessages.appendChild(typingIndicator);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            // 2. Add more detailed request logging
+            console.log('Sending request to:', apiUrl, {
+                message: userMessage,
+                session_id: chatUI.sessionId
+            });
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: userMessage,
+                    session_id: chatUI.sessionId
+                }),
+                credentials: 'include' // Important for sessions/cookies
+            });
+
+            console.log('Raw response:', response);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Server response error:', errorText);
+                throw new Error(`Server error: ${response.status} - ${errorText}`);
+            }
+
+            const responseData = await response.json();
+            typingIndicator.remove();
+
+            if (responseData.success) {
+                addMessage(responseData.reply, false);
+            } else {
+                addMessage(`⚠️ ${responseData.reply}`, false);
+            }
+        } catch (error) {
+            console.error('Full error details:', error);
+            typingIndicator.remove();
             
-            // Find best matching response
-            const lowerQuestion = question.toLowerCase();
-            let response = sportsKnowledge.default;
-            
-            for (const [key, value] of Object.entries(sportsKnowledge)) {
-                if (lowerQuestion.includes(key)) {
-                    response = value;
-                    break;
-                }
+            let errorMessage = "⚠️ Service unavailable. Please try again later.";
+            if (error.message.includes('Failed to fetch')) {
+                errorMessage = "⚠️ Couldn't reach the server. Check your network.";
+            } else if (error.message.includes('No internet')) {
+                errorMessage = "⚠️ You're offline. Please connect to the internet.";
             }
             
-            // Simulate typing delay
-            setTimeout(() => {
-                chatMessages.removeChild(typingIndicator);
-                addMessage(response);
-                
-                // Auto-close after 5 messages
-                if (chatMessages.children.length > 10) {
-                    container.classList.remove('show');
-                }
-            }, 1000 + Math.random() * 1000); // Random delay between 1-2 seconds
+            addMessage(errorMessage, false);
+        } finally {
+            chatUI.userInputField.disabled = false;
+            chatUI.sendButton.disabled = false;
+            chatUI.userInputField.focus();
         }
     }
-    
+
     // Event listeners
-    sendBtn.addEventListener('click', processInput);
-    userInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') processInput();
+    chatUI.toggleButton.addEventListener('click', toggleChatVisibility);
+    chatUI.closeButton.addEventListener('click', closeChat);
+    chatUI.sendButton.addEventListener('click', sendMessage);
+    chatUI.userInputField.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
     });
-    
+
     // Initial greeting
     setTimeout(() => {
-        addMessage("Hi there! I'm your Sports Education Assistant. Ask me about training techniques, sports science, or coaching strategies!", false);
+        addMessage("Hi! I'm Coach Bot 🏀 Ask me about sports or training tips!", false);
     }, 1000);
 });

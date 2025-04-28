@@ -3,11 +3,18 @@
         <a class="navbar-brand" href="{{ url_for('home') }}">
             <img src="{{ url_for('static', filename='image/Gc-Foster-College.png') }}" 
                  alt="Logo" width="50" height="50">
-        </a>
+        </a> 
+        <button class="navbar-toggler" 
+            type="button" 
+             data-bs-toggle="collapse" 
+             data-bs-target="#navbarNav"
+            aria-label="Toggle navigation"
+            aria-expanded="false"
+             aria-controls="navbarNav">
+         <span class="navbar-toggler-icon">
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+         </span> 
+     </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
@@ -43,7 +50,7 @@
                 {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('login') }}">
-                        <i class="fas fa-sign-in-alt"></i> Login
+                        <i class="fas fa-sign-in-alt"></i> Coach Login
                     </a>
                 </li>
                 {% endif %}

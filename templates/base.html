@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>Felicia Smith - Sports Education Portfolio</title>
     
     <!-- Bootstrap CSS -->
@@ -21,22 +23,6 @@
     <!-- Navigation -->
     {% include 'nav.html' %}
 
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="container mt-3">
-                {% for category, message in messages %}
-                    {% if category != 'login' or request.path != url_for('contact') %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-
     <!-- Main Content -->
     <main class="flex-grow-1 container my-4">
         {% block content %}{% endblock %}
@@ -46,20 +32,20 @@
     {% include 'footer.html' %}
 
     <!-- AI Chatbot -->
-    <div id="chatbot-container" class="shadow-lg">
+    <div id="chatbot-container" class="shadow-lg" role="dialog" aria-labelledby="chatbot-header" aria-live="polite">
         <div class="chatbot-card">
-            <div class="chat-header d-flex justify-content-between align-items-center">
-                <span><i class="fas fa-robot me-2"></i>Sports Coach Bot</span>
-                <button id="close-chatbot" class="btn btn-sm btn-light">
+            <div class="chat-header d-flex justify-content-between align-items-center" id="chatbot-header">
+                <span><i class="fas fa-robot me-2" aria-hidden="true"></i>Sports Coach Bot</span>
+                <button id="close-chatbot" class="btn btn-sm btn-light" aria-label="Close chatbot">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div id="chat-messages"></div>
+            <div id="chat-messages" role="log"></div>
             <div class="chat-footer">
                 <div class="input-group">
                     <input type="text" id="user-input" class="form-control" 
                            placeholder="Ask about sports..." aria-label="Chat input">
-                    <button id="send-btn" class="btn btn-primary">
+                    <button id="send-btn" class="btn btn-primary" aria-label="Send message">
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>
@@ -67,8 +53,8 @@
         </div>
     </div>
 
-    <button id="chatbot-toggle" class="shadow">
-        <i class="fas fa-robot fa-lg"></i>
+    <button id="chatbot-toggle" class="shadow" aria-label="Open sports coach chatbot" title="Chat with CoachBot">
+        <i class="fas fa-robot fa-lg" aria-hidden="true"></i>
     </button>
 
     <!-- JavaScript Libraries -->
@@ -76,19 +62,6 @@
     
     <!-- Custom JavaScript -->
     <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
-    
-    <!-- CSRF Token Debugging -->
-    <script>
-    console.log('Current CSRF Token:', "{{ csrf_token() }}");
-    
-    // Debug form submissions
-    document.addEventListener('submit', function(e) {
-        if (e.target.classList.contains('delete-form')) {
-            console.log('Delete form submitted');
-            console.log('CSRF token:', e.target.querySelector('[name="csrf_token"]').value);
-        }
-    });
-    </script>
     
     {% block scripts %}{% endblock %}
 </body>
