@@ -11,6 +11,8 @@ gunicorn
 dotenv
 flask-login
 # Email & Security
+requests
+
 email-validator
 
 # File Handling
