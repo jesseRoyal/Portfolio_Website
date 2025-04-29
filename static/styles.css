@@ -1,4 +1,4 @@
-/* ===== SPORTS THEME ===== */
+/* ===== SPORTS THEME VARIABLES ===== */
 :root {
     --sport-green: #1e8a3b;
     --track-orange: #ff6b35;
@@ -7,6 +7,7 @@
     --court-purple: #6a3093;
 }
 
+/* ===== BASE STYLES ===== */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     min-height: 100vh;
@@ -14,63 +15,179 @@ body {
     flex-direction: column;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    background: url('../static/image/track.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
 }
 
-/* Sporty Background Pattern */
-.sport-bg-pattern {
-    background-color: #f8f9fa;
-    background-image: 
-        linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)),
-        url('../image/sport-pattern.png');
-    background-size: 300px, cover;
-}
-
-/* Navbar */
+/* ===== TRANSPARENT NAVBAR WITH GRADIENT ===== */
 .navbar {
-    background: linear-gradient(to right, var(--sport-green), var(--court-purple));
+    background: linear-gradient(to right, 
+        rgba(30, 138, 59, 0.9),  /* var(--sport-green) with transparency */
+        rgba(106, 48, 147, 0.9)  /* var(--court-purple) with transparency */
+    ) !important;
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 .navbar-brand, .nav-link {
     color: white !important;
     font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
 }
 
 .nav-link:hover {
     color: var(--warm-yellow) !important;
     transform: translateY(-2px);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
 }
 
-/* Hero Section */
+.navbar-toggler {
+    border-color: rgba(255,255,255,0.3);
+    color: white;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Dropdown menu styling */
+.navbar .dropdown-menu {
+    background: rgba(30, 138, 59, 0.95);
+    border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(5px);
+}
+
+.navbar .dropdown-item {
+    color: white !important;
+    padding: 0.5rem 1.5rem;
+}
+
+.navbar .dropdown-item:hover {
+    background: rgba(255,255,255,0.15);
+    color: var(--warm-yellow) !important;
+}
+
+/* ===== HERO SECTION ===== */
 .hero {
-    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                url('../image/track-field.jpg');
-    background-size: cover;
-    background-position: center;
+    background: rgba(0, 0, 0, 0.6);
     color: white;
     border-radius: 15px;
     margin: 2rem 0;
     padding: 5rem 2rem;
-    text-align: start;
+    text-align: center;
     position: relative;
     overflow: hidden;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 
 .hero h1 {
     font-size: 3.5rem;
     font-weight: 800;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    margin-bottom: 1.5rem;
     animation: fadeInDown 1s;
 }
 
-/* ===== ENHANCED CHATBOT STYLES ===== */
+.hero-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 2.5rem;
+    opacity: 0.9;
+}
+
+/* Hero Call-to-Action Button */
+.hero-cta-btn {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    background: linear-gradient(135deg, var(--sport-green), var(--field-blue));
+    color: white !important;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-cta-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    color: white;
+}
+
+/* Pulse animation */
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* ===== EXPLORE SECTION ===== */
+.explore-section {
+    padding: 4rem 0;
+}
+
+.section-heading {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: white;
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.explore-btn {
+    display: block;
+    padding: 1.5rem 1rem;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    color: white !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    border: 2px solid transparent;
+}
+
+.explore-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.portfolio-btn {
+    background: linear-gradient(135deg, var(--sport-green), rgba(30, 138, 59, 0.8));
+}
+
+.philosophy-btn {
+    background: linear-gradient(135deg, var(--field-blue), rgba(0, 165, 224, 0.8));
+}
+
+.reflection-btn {
+    background: linear-gradient(135deg, var(--warm-yellow), rgba(255, 214, 0, 0.8));
+}
+
+.explore-btn i {
+    font-size: 1.4rem;
+}
+
+/* ===== CHATBOT STYLES ===== */
 #chatbot-container {
     position: fixed;
     bottom: 80px;
     right: 20px;
     width: 350px;
     height: 500px;
-    background: white;
+    background: rgba(255, 255, 255, 0.95);
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -89,14 +206,12 @@ body {
     pointer-events: auto;
 }
 
-/* Chatbot Card Structure */
 .chatbot-card {
     display: flex;
     flex-direction: column;
     height: 100%;
 }
 
-/* Chat header */
 .chat-header {
     background: linear-gradient(to right, var(--sport-green), var(--court-purple));
     color: white;
@@ -107,7 +222,6 @@ body {
     align-items: center;
 }
 
-/* Chat messages scroll container */
 .chat-messages-scroll-container {
     flex: 1;
     overflow-y: auto;
@@ -232,11 +346,6 @@ body {
     animation-delay: 0.4s;
 }
 
-@keyframes typingAnimation {
-    0%, 60%, 100% { transform: translateY(0); }
-    30% { transform: translateY(-5px); }
-}
-
 /* Input area */
 .chat-footer {
     display: flex;
@@ -303,7 +412,7 @@ body {
     transform: scale(1.1);
 }
 
-/* Animations */
+/* ===== ANIMATIONS ===== */
 @keyframes fadeInDown {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -319,12 +428,35 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive */
+@keyframes typingAnimation {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-5px); }
+}
+
+/* ===== RESPONSIVE STYLES ===== */
 @media (max-width: 768px) {
     .hero h1 {
         font-size: 2.5rem;
     }
     
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .hero-cta-btn {
+        padding: 0.8rem 1.8rem;
+        font-size: 1rem;
+    }
+    
+    .section-heading {
+        font-size: 2rem;
+    }
+    
+    .explore-btn {
+        padding: 1.2rem 0.8rem;
+        font-size: 1rem;
+    }
+
     #chatbot-container {
         width: 90%;
         right: 5%;
@@ -336,5 +468,10 @@ body {
         width: 50px;
         height: 50px;
         font-size: 1.5rem;
+    }
+
+    .navbar {
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
     }
 }
